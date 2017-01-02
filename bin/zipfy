@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+
+#using http://robdodson.me/how-to-write-a-command-line-ruby-gem/
+
+require 'zipfy'
+
+verbose = false
+save_path = nil
+overwrite_save = false
+
+opts = GetoptLong.new(
+    [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
+    [ '--save', '-s', GetoptLong::REQUIRED_ARGUMENT ],
+    [ '--verbose', '-v', GetoptLong::NO_ARGUMENT ]
+)
+
+file_path =  ARGV[0]
+if !file_path 
+    puts "Please specify a file to evaluate. Run zipf -h for more information"
+    exit
+end
+
+opts.each do |opt, arg|
+    case opt
+    when '--help'
+        puts <<-EOF
+Usage: zipf [FILE]
+
+FILE:
+    the file the analyze
+
+-h, --help:
+   show help
+
+-v, --verbose:
+   show table of calculations
+
+-s, --save:
+    save output of verbose to a file.
+
+-f --force:
+    overwrite save file if one already exists
+EOF
+exit 
+    when '--verbose'
+        verbose = true
+    when '--save'
+        save_path = arg
+    when '--force'
+        overwrite_save = true
+    end
+end
+
+z = Zipf.new
+z.create_distribution( z.load_file file_path)
+z.sort_distribution
+z.calculate_zipfness
+z.puts_distribution if verbose
+z.save_dist_to_file save_path, overwrite_save if save_path
+puts z.calculate_std_dev_from_reg

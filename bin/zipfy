@@ -1,8 +1,9 @@
 #!/usr/bin/env ruby
 
 #using http://robdodson.me/how-to-write-a-command-line-ruby-gem/
-
+require 'getoptlong'
 require 'zipfy'
+include Zipfy
 
 verbose = false
 save_path = nil
@@ -53,6 +54,8 @@ end
 
 z = Zipf.new
 z.create_distribution( z.load_file file_path)
+puts z.distribution
+exit
 z.sort_distribution
 z.calculate_zipfness
 z.puts_distribution if verbose

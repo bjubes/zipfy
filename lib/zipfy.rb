@@ -2,6 +2,7 @@ require 'pry'
 # a program for seeing the zipfian distribution of a text.
 require 'putsplus'
 include Putsplus
+require_relative 'zipfy/word_data.rb'
 
 module Zipfy
     class Zipf 
@@ -28,12 +29,21 @@ module Zipfy
         # sets instance var distribution to the distirubtion of the words set passed
         #
         def create_distribution words
-            @distribution = Hash.new(0)
+            temp_hash = Hash.new(0)
+            @distribution = []
             @total = 0
+            @zipf_constant = nil
+
             words.each do |word|
-                @distribution[word] += 1
+                temp_hash[word] += 1
                 @total += 1
             end
+            temp_hash.keys.each do |k|
+                WordData.new(k, temp_hash[k]) >> @distribution
+            end
+
+            binding.pry
+
         end
 
         def sort_distribution
@@ -45,12 +55,13 @@ module Zipfy
 
             #zipf number is equal to freq * zipf_const/total
             # so call zipf_const/total 'z'
-            z = @zipf_constant/total.to_f
+            z = @zipf_constant/@total.to_f
             length = @distribution.length
 
-            @distribution.each do |d|
+            @distribution.map do |d|
                 d[2] = z * d[1]
             end
+            binding.pry
         end
 
         def puts_distribution
@@ -70,7 +81,7 @@ module Zipfy
         end
 
         def calculate_zipf_constant
-            most_common_word = @distribution[-1]
+            most_common_word_frequency = @distribution[@distribution.keys.last]
             #this word has rank =1 , so its zipf factor should be 1/n = 1/1 = 1
             # so find its percentage and then multiply it up to one.
 
@@ -79,9 +90,11 @@ module Zipfy
             #by adding a constant to the right side
             # where constant = total words/ freq of most common word
 
-            @zipf_constant = @total.to_f / most_common_word[1].to_f
+            @zipf_constant = @total.to_f / most_common_word_frequency.to_f
+            @zipf_constant
         end
 
+        #must calculate zipfness first
         def calculate_std_dev_from_reg
             #the zipfness should be equal to 1/rank. lets see the average deviatoin form that number
             length = @distribution.length

@@ -17,7 +17,9 @@ class ZipfyTest < Minitest::Test
 	def test_distribution_is_unique
 		words = "the it the the it and yet for nor not for for-got".split(" ")
 		@z.create_distribution words
-		assert_equal(@z.distribution.keys, words.uniq)
+		words_arr = []
+		@z.distribution.each {|d| words_arr << d.word}
+		assert_equal(words_arr, words.uniq)
 	end
 
 	def test_zipf_constant_for_one_word_is_one

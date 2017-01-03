@@ -1,4 +1,4 @@
-# Zipfy
+# Zipfy ![Build Status](https://travis-ci.org/bjubes/zipfy.svg?branch=master)
 
 Zipfy calculates word distribution in text files or strings and their deviation from Zipf's law"
 

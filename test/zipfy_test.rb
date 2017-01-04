@@ -39,7 +39,6 @@ class ZipfyTest < Minitest::Test
 		@z.create_distribution ["test", "123"]
 		@z.calculate_zipf_constant
 		assert_equal 2,  @z.zipf_constant
-
 	end
 
 	def test_zipf_consant_for_random_uniq_array
@@ -58,6 +57,5 @@ class ZipfyTest < Minitest::Test
 			assert_in_delta (1/18.to_f), @z.calculate_std_dev_from_reg, 0.00001
 	end
 	
-
-
+	
 end

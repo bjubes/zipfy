@@ -1,6 +1,7 @@
 begin #dev optional gems
 require 'pry'
 rescue LoadError
+    STDERR.puts "some dev deps not installed .. ignoring"
     #probably a travis or non-dev build
 end
 
@@ -47,6 +48,7 @@ module Zipfy
             temp_hash.keys.each do |k|
                 @distribution << WordData.new(k, temp_hash[k])
             end
+            sort_distribution
         end
 
         def sort_distribution
@@ -97,12 +99,13 @@ module Zipfy
 
         #must calculate zipfness first
         def calculate_std_dev_from_reg
-            #the zipfness should be equal to 1/rank. lets see the average deviatoin form that number
+            #binding.pry
+            #the zipfness should be equal to 1/rank. lets see the average deviation from that number
             length = @distribution.length
             deviations = []
 
             @distribution.each_with_index do |wd,i|
-                theoretical = 1/(length - i).to_f
+                theoretical = 1.0/(length - i).to_f
                 actual = wd.zip_number
                 deviation = (theoretical - actual).abs
                 deviations << deviation

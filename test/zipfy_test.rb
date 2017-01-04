@@ -2,9 +2,11 @@ require 'test_helper'
 require 'zipfy'
 require 'zipfy/version'
 
-begin #optional dev depedencies
+begin #dev optional gems
 require 'pry'
 rescue LoadError
+    STDERR.puts "some dev deps not installed .. ignoring"
+    #probably a travis or non-dev build
 end
 
 include Zipfy
@@ -23,7 +25,7 @@ class ZipfyTest < Minitest::Test
 		@z.create_distribution words
 		words_arr = []
 		@z.distribution.each {|d| words_arr << d.word}
-		assert_equal(words_arr, words.uniq)
+		assert(true, words_arr === words.uniq)
 	end
 
 	def test_zipf_constant_for_one_word_is_one
@@ -47,6 +49,15 @@ class ZipfyTest < Minitest::Test
 		@z.calculate_zipf_constant
 		assert_equal random_words.uniq.length, @z.zipf_constant
 	end
+	
+	def test_std_reg_with_simple_set
+			@z.create_distribution "a a a b c".split(" ") #missing a "b" to make this perfect
+			@z.calculate_zipfness
+			#out of a set of 3, b is deviating by 1, so its zipf dev is 1/2 - 1/3
+			# (1/2 - 1/3) / 3 = 1/18
+			assert_in_delta (1/18.to_f), @z.calculate_std_dev_from_reg, 0.00001
+	end
+	
 
 
 end

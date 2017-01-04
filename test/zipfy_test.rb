@@ -2,7 +2,11 @@ require 'test_helper'
 require 'zipfy'
 require 'zipfy/version'
 
+begin #optional dev depedencies
 require 'pry'
+rescue LoadError
+end
+
 include Zipfy
 
 class ZipfyTest < Minitest::Test

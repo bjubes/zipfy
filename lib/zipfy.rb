@@ -1,4 +1,10 @@
+begin #dev optional gems
 require 'pry'
+rescue LoadError
+    #probably a travis or non-dev build
+end
+
+
 # a program for seeing the zipfian distribution of a text.
 require 'putsplus'
 include Putsplus
@@ -104,6 +110,6 @@ module Zipfy
             sum = 0.0
             deviations.each {|d| sum += d}
             (sum/length.to_f)
-         end
+        end
     end
 end

@@ -8,18 +8,16 @@ include Zipfy
 verbose = false
 save_path = nil
 overwrite_save = false
+excerpt = nil
 
 opts = GetoptLong.new(
     [ '--help', '-h', GetoptLong::NO_ARGUMENT ],
     [ '--save', '-s', GetoptLong::REQUIRED_ARGUMENT ],
-    [ '--verbose', '-v', GetoptLong::NO_ARGUMENT ]
+    [ '--verbose', '-v', GetoptLong::NO_ARGUMENT ],
+    [ '--excerpt', '-e', GetoptLong::REQUIRED_ARGUMENT ]
 )
 
-file_path =  ARGV[0]
-if !file_path 
-    puts "Please specify a file to evaluate. Run zipf -h for more information"
-    exit
-end
+
 
 opts.each do |opt, arg|
     case opt
@@ -41,6 +39,10 @@ FILE:
 
 -f --force:
     overwrite save file if one already exists
+
+-e --excerpt:
+    analyzes the string passed as an excerpt
+    
 EOF
 exit 
     when '--verbose'
@@ -49,12 +51,28 @@ exit
         save_path = arg
     when '--force'
         overwrite_save = true
+    when '--excerpt'
+        excerpt = arg
     end
 end
 
+file_path =  ARGV[0]
+if !file_path && !excerpt 
+    puts "Please specify a file or excerpt to evaluate. Run zipf -h for more information"
+    exit
+end
+if file_path && excerpt
+    puts "Please specify either a file or an excerpt, not both"
+    exit
+end
+
 z = Zipf.new
-z.create_distribution( z.load_file file_path)
-z.distribution
+
+if excerpt 
+    z.create_distribution(excerpt.split(" "))
+else
+    z.create_distribution( z.load_file file_path)
+end
 z.sort_distribution
 z.calculate_zipfness
 z.puts_distribution if verbose

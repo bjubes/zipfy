@@ -58,11 +58,11 @@ end
 
 file_path =  ARGV[0]
 if !file_path && !excerpt 
-    puts "Please specify a file or excerpt to evaluate. Run zipf -h for more information"
+    STDERR.puts "Please specify a file or excerpt to evaluate. Run zipf -h for more information"
     exit
 end
 if file_path && excerpt
-    puts "Please specify either a file or an excerpt, not both"
+    STDERR.puts "Please specify either a file or an excerpt, not both"
     exit
 end
 
